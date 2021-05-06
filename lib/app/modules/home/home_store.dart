@@ -8,14 +8,23 @@ class HomeStore = HomeStoreBase with _$HomeStore;
 
 abstract class HomeStoreBase with Store {
   final ITodoRepository repository;
+
   @observable
   ObservableStream<List<TodoModel>> todoList;
-  HomeStoreBase(ITodoRepository this.repository) {
+  HomeStoreBase(this.repository) {
     getList();
   }
 
   @action
   getList() {
     todoList = repository.getTodos().asObservable();
+  }
+
+  Future saveTodo(TodoModel todoModel) {
+    return repository.save(todoModel);
+  }
+
+  Future delete(TodoModel todoModel) {
+    return repository.delete(todoModel);
   }
 }

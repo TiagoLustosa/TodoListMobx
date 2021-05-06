@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:todo_list_app/app/modules/home/repositories/todo_repository.dart';
+import 'package:hasura_connect/hasura_connect.dart';
+import 'package:todo_list_app/app/modules/home/models/todo_model.dart';
+import 'package:todo_list_app/app/modules/home/repositories/todo_firebase_repository.dart';
+import 'package:todo_list_app/app/modules/home/repositories/todo_hasura_repository.dart';
 import 'package:todo_list_app/app/modules/home/repositories/todo_repository_interface.dart';
 import '../home/home_store.dart';
 
@@ -10,7 +13,10 @@ class HomeModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.lazySingleton((i) => HomeStore(i.get())),
-    Bind<ITodoRepository>((i) => TodoRepository(FirebaseFirestore.instance)),
+    Bind<ITodoRepository>(
+        (i) => TodoFirebaseRepository(FirebaseFirestore.instance)),
+    // Bind<ITodoRepository>((i) => TodoHasuraRepository(i.get())),
+    //Bind((i) => HasuraConnect('https://modest-sloth-58.hasura.app/v1/graphql')),
   ];
 
   @override

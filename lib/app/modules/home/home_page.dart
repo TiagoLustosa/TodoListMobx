@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list_app/app/modules/home/components/todo_widget.dart';
 import 'package:todo_list_app/app/modules/home/home_store.dart';
 import 'package:todo_list_app/app/modules/home/models/todo_model.dart';
 import 'package:todo_list_app/app/modules/widgets/datetime_picker_widget.dart';
@@ -43,67 +44,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
             itemCount: list.length,
             itemBuilder: (_, index) {
               TodoModel model = list[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.12,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            flex: 3,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    model.title,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(DateFormat('dd/MM/yyyy hh:mm a')
-                                      .format(model.date.toDate()))
-                                ],
-                              ),
-                            )),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.verified,
-                                        color: model.check
-                                            ? Colors.green
-                                            : Colors.white),
-                                    onPressed: () {
-                                      model.check = !model.check;
-                                      model.save();
-                                    }),
-                                IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      _showDialog(model);
-                                    }),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      model.delete();
-                                    })
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return TodoWidget(
+                model: model,
+                onPressed: () {
+                  _showDialog(model);
+                },
               );
             });
       }),
@@ -141,8 +86,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                          onPressed: () {
-                            pickDateTime(context);
+                          onPressed: () async {
+                            await pickDateTime(context);
                             print(dateTime);
                             model.date = Timestamp.fromDate(dateTime);
                             print(model.date);
@@ -165,7 +110,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          await model.save();
+                          print(dateTime);
+                          await store.saveTodo(model);
                           Modular.to.pop();
                         },
                         child: Text('Salvar'),
